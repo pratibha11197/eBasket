@@ -78,4 +78,13 @@ public class CartService {
 		return "success";
 	}
 
+	public String deleteCartItem(Integer cartProductId) {
+		if(cartItemRepository.existsById(cartProductId)) {
+		  cartItemRepository.deleteById(cartProductId);
+		  return "Cart Item deleted";
+		}else {
+			return "No cart item exists with id : " + cartProductId;
+		}
+	}
+
 }
