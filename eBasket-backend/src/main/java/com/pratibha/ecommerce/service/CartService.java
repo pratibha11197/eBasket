@@ -14,13 +14,13 @@ import com.pratibha.ecommerce.repository.ProductRepository;
 
 @Service
 public class CartService {
-	
+
 	@Autowired
 	private CartItemRepository cartItemRepository;
-	
+
 	@Autowired
 	private ProductRepository productRepository;
-	
+
 	@Autowired
 	private CartRepository cartRepository;
 
@@ -29,62 +29,68 @@ public class CartService {
 	}
 
 	public CartItem addToCart(Integer productId, Integer userId, Integer qty) {
-		if(productId != null && userId != null) {
+		if (productId != null && userId != null) {
 			CartItem cartItem;
 			CartItem result;
-			
+
 			Product product = productRepository.findById(productId).get();
-			
+
 			Cart cart = cartRepository.findCartByUserId(userId);
-			
+
 			CartItem cartExisting = cartItemRepository.getCartItemsByUserIdAndProductId(userId, productId);
-			
-			if(cartExisting == null) {
+
+			if (cartExisting == null) {
 				cartItem = new CartItem();
 				cartItem.setDiscount((float) 10);
 				cartItem.setPrice(product.getPrice());
 				cartItem.setQuantity(qty != null ? qty : 1);
 				cartItem.setProduct(product);
 				cartItem.setCart(cart);
-			}
-			else {
+			} else {
 				cartItem = cartExisting;
-				cartItem.setQuantity(qty != null ?  cartExisting.getQuantity()+qty : cartExisting.getQuantity() + 1);
+				cartItem.setQuantity(qty != null ? cartExisting.getQuantity() + qty : cartExisting.getQuantity() + 1);
 			}
-			
+
 			result = cartItemRepository.save(cartItem);
 			return result;
-		}
-		else {
+		} else {
 			System.out.println("Produt Id/ user Id null");
 			return null;
 		}
 	}
 
 	public String DecreaseIncreaseCartItemQty(Integer cartProductId, Integer qty) {
-		if(cartProductId == null || qty == null)
+		if (cartProductId == null || qty == null)
 			return "cartProductId is null";
-		
-		CartItem existingCartItem =  cartItemRepository.findById(cartProductId).get();
+		try {
+			CartItem existingCartItem = cartItemRepository.findById(cartProductId).get();
 
-		if(qty <= 0) {
-			cartItemRepository.deleteById(cartProductId);
+			if (qty <= 0) {
+				cartItemRepository.deleteById(cartProductId);
+			} else {
+				existingCartItem.setQuantity(qty);
+				cartItemRepository.save(existingCartItem);
+			}
+
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error while increasing decreasing cart item quantity";
 		}
-		else {
-			existingCartItem.setQuantity(qty);
-			cartItemRepository.save(existingCartItem);
-		}
-		
-		return "success";
 	}
 
 	public String deleteCartItem(Integer cartProductId) {
-		if(cartItemRepository.existsById(cartProductId)) {
-		  cartItemRepository.deleteById(cartProductId);
-		  return "Cart Item deleted";
-		}else {
+		try {
+		if (cartItemRepository.existsById(cartProductId)) {
+			cartItemRepository.deleteById(cartProductId);
+			return "success";
+		} else {
 			return "No cart item exists with id : " + cartProductId;
 		}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return "Failed to delete cart item";
+		}
 	}
-
 }

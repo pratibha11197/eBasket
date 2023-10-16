@@ -3,6 +3,7 @@ package com.pratibha.ecommerce.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pratibha.ecommerce.entity.CartItem;
+import com.pratibha.ecommerce.requestresponse.ResponseHandler;
 import com.pratibha.ecommerce.service.CartService;
 
 import jakarta.websocket.server.PathParam;
@@ -25,35 +27,53 @@ public class CartController {
 	private CartService cartService;
 	
 	@GetMapping("/cart/{userId}")
-	public ResponseEntity<List<CartItem>> getCartItemsByUserId(@PathVariable("userId") Integer userId){
+	public ResponseEntity<ResponseHandler> getCartItemsByUserId(@PathVariable("userId") Integer userId){
 		
 		List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
 		
-		if (cartItems != null) {
-	        return ResponseEntity.ok(cartItems);
+		if (cartItems != null && cartItems.size() > 0) {
+			return new ResponseEntity<>(new ResponseHandler(true, "OK", cartItems), HttpStatus.OK);
 	    }
 	    else {
-	        return ResponseEntity.notFound().build();
+	    	return new ResponseEntity<>(new ResponseHandler(false, "No item in cart", cartItems), HttpStatus.NOT_FOUND);
 	    }
 	}
 	
 	@PostMapping("/cart/add")
-	public ResponseEntity<Object> AddProductToCart(@PathParam("productId") Integer productId, @PathParam("userId") Integer userId, @RequestParam(name="qty", required=false) Integer qty) {
+	public ResponseEntity<ResponseHandler> AddProductToCart(@PathParam("productId") Integer productId, @PathParam("userId") Integer userId, @RequestParam(name="qty", required=false) Integer qty) {
 		CartItem cartItem = cartService.addToCart(productId, userId, qty);
-		return ResponseEntity.ok(cartItem);
+		
+		if(cartItem != null) {
+			return new ResponseEntity<>(new ResponseHandler(true, "OK", cartItem), HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(new ResponseHandler(false, "Failed to add to cart", cartItem), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@GetMapping("/cart/incDesCartItemQty")
-	public ResponseEntity<Object> DecreaseIncreaseCartItemQty(@RequestParam("cartProductId") Integer cartProductId, @RequestParam("qty") Integer qty) {
+	public ResponseEntity<ResponseHandler> DecreaseIncreaseCartItemQty(@RequestParam("cartProductId") Integer cartProductId, @RequestParam("qty") Integer qty) {
 		String res = cartService.DecreaseIncreaseCartItemQty(cartProductId, qty);
-		return ResponseEntity.ok(null);
+		
+		if(res == "success") {
+			return new ResponseEntity<>(new ResponseHandler(true, res, new Object()), HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(new ResponseHandler(false, res, new Object()), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@DeleteMapping("/cart/{cartProductId}")
-	public void deleteCartItem(@PathVariable("cartProductId") Integer cartProductId){
+	public ResponseEntity<ResponseHandler> deleteCartItem(@PathVariable("cartProductId") Integer cartProductId){
 		if(cartProductId != null) {
-		   cartService.deleteCartItem(cartProductId);
+			String res = cartService.deleteCartItem(cartProductId);
+			if(res == "success")
+				return new ResponseEntity<>(new ResponseHandler(true, res, new Object()), HttpStatus.OK);
+			else
+				return new ResponseEntity<>(new ResponseHandler(false, res, new Object()), HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(new ResponseHandler(false, "CartProductId is null", new Object()), HttpStatus.OK);
 		}
 	}
-	
 }
