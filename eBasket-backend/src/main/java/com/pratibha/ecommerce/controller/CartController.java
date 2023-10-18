@@ -35,7 +35,7 @@ public class CartController {
 			return new ResponseEntity<>(new ResponseHandler(true, "OK", cartItems), HttpStatus.OK);
 	    }
 	    else {
-	    	return new ResponseEntity<>(new ResponseHandler(false, "No item in cart", cartItems), HttpStatus.NOT_FOUND);
+	    	return new ResponseEntity<>(new ResponseHandler(true, "No item in cart", cartItems), HttpStatus.OK);
 	    }
 	}
 	
@@ -56,10 +56,10 @@ public class CartController {
 		String res = cartService.DecreaseIncreaseCartItemQty(cartProductId, qty);
 		
 		if(res == "success") {
-			return new ResponseEntity<>(new ResponseHandler(true, res, new Object()), HttpStatus.OK);
+			return new ResponseEntity<>(new ResponseHandler(true, "Item quantity Increased/Decresed", null), HttpStatus.OK);
 		}
 		else {
-			return new ResponseEntity<>(new ResponseHandler(false, res, new Object()), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new ResponseHandler(false, "Failed to Increased/Decresed cart item quantity.", null), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -68,12 +68,12 @@ public class CartController {
 		if(cartProductId != null) {
 			String res = cartService.deleteCartItem(cartProductId);
 			if(res == "success")
-				return new ResponseEntity<>(new ResponseHandler(true, res, new Object()), HttpStatus.OK);
+				return new ResponseEntity<>(new ResponseHandler(true, "Item deleted from Cart.", null), HttpStatus.OK);
 			else
-				return new ResponseEntity<>(new ResponseHandler(false, res, new Object()), HttpStatus.OK);
+				return new ResponseEntity<>(new ResponseHandler(false, "Failed to delete item from Cart.", null), HttpStatus.OK);
 		}
 		else {
-			return new ResponseEntity<>(new ResponseHandler(false, "CartProductId is null", new Object()), HttpStatus.OK);
+			return new ResponseEntity<>(new ResponseHandler(true, "CartProductId is null", null), HttpStatus.OK);
 		}
 	}
 }

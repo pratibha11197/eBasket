@@ -26,7 +26,7 @@ public class ProductCategoryController {
 		if(productCategories != null)
 			return new ResponseEntity<>(new ResponseHandler(true, "OK", productCategories), HttpStatus.OK);
 		else
-			return new ResponseEntity<>(new ResponseHandler(false, "ProductCategories not found", productCategories), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new ResponseHandler(true, "ProductCategories not found", productCategories), HttpStatus.OK);
 	}
  
 }

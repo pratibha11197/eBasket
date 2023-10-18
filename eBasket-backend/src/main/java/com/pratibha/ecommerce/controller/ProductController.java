@@ -32,7 +32,7 @@ public class ProductController {
 	        return new ResponseEntity<>(new ResponseHandler(true, "OK", product), HttpStatus.OK);
 	    }
 	    else {
-	    	return new ResponseEntity<>(new ResponseHandler(false, "Product not found with Id " + productId, product), HttpStatus.NOT_FOUND);
+	    	return new ResponseEntity<>(new ResponseHandler(true, "Product not found with Id " + productId, product), HttpStatus.OK);
 	    }
 	}
 	
@@ -51,7 +51,7 @@ public class ProductController {
 			return new ResponseEntity<>(new ResponseHandler(true, "OK", products), HttpStatus.OK);
 	    }
 	    else {
-	    	return new ResponseEntity<>(new ResponseHandler(false, "No product found", products), HttpStatus.NOT_FOUND);
+	    	return new ResponseEntity<>(new ResponseHandler(true, "No product found", products), HttpStatus.OK);
 	    }
 	}
 	
@@ -69,7 +69,7 @@ public class ProductController {
 			return new ResponseEntity<>(new ResponseHandler(true, "OK", products), HttpStatus.OK);
 	    }
 	    else {
-	    	return new ResponseEntity<>(new ResponseHandler(false, "No product found", products), HttpStatus.NOT_FOUND);
+	    	return new ResponseEntity<>(new ResponseHandler(true, "No product found", products), HttpStatus.OK);
 	    }
 	}
 }
