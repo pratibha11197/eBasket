@@ -44,7 +44,7 @@ public class CartController {
 		CartItem cartItem = cartService.addToCart(productId, userId, qty);
 		
 		if(cartItem != null) {
-			return new ResponseEntity<>(new ResponseHandler(true, "OK", cartItem), HttpStatus.OK);
+			return new ResponseEntity<>(new ResponseHandler(true, "Product added to cart", cartItem), HttpStatus.OK);
 		}
 		else {
 			return new ResponseEntity<>(new ResponseHandler(false, "Failed to add to cart", cartItem), HttpStatus.INTERNAL_SERVER_ERROR);
