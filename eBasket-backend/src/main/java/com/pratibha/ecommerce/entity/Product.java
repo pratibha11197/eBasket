@@ -1,5 +1,9 @@
 package com.pratibha.ecommerce.entity;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +56,9 @@ public class Product {
 
 	@Column(name = "product_stocks")
 	private Integer productStocks;
+	
+	@OneToMany(mappedBy = "product")
+	private List<OrderItem> orderItem;
 
 	public Integer getProduct_id() {
 		return product_id;
@@ -123,5 +132,8 @@ public class Product {
 		this.productStocks = productStocks;
 	}
 
-	
+//	public void setOrderItem(OrderItem orderItem) {
+//		this.orderItem = orderItem;
+//	}	
+//	
 }
