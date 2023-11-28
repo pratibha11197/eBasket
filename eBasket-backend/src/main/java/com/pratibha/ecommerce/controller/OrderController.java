@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pratibha.ecommerce.entity.OrderItem;
 import com.pratibha.ecommerce.entity.Orders;
 import com.pratibha.ecommerce.requestresponse.ResponseHandler;
 import com.pratibha.ecommerce.service.OrderService;
@@ -49,6 +50,30 @@ public class OrderController {
 		List<Orders> orders = orderService.getAllOrders(userId);
 		
 		return ResponseEntity.ok(new ResponseHandler(true, "Customer found", orders));
+		
+	}
+	
+	@GetMapping("/orders/id/{orderId}")
+	public ResponseEntity<ResponseHandler> getOrderById(@PathVariable("orderId") Integer orderId){
+		if(orderId == null || orderId == 0) {
+			return ResponseEntity.ok(new ResponseHandler(true, "Order Id is null.", null));
+		}
+		
+		Orders orders = orderService.getOrderById(orderId);
+		
+		return ResponseEntity.ok(new ResponseHandler(true, "Orders found", orders));
+		
+	}
+	
+	@GetMapping("/orders/items/{orderId}")
+	public ResponseEntity<ResponseHandler> getOrderItemsById(@PathVariable("orderId") Integer orderId){
+		if(orderId == null || orderId == 0) {
+			return ResponseEntity.ok(new ResponseHandler(true, "Order Id is null.", null));
+		}
+		
+		List<OrderItem> orderItems = orderService.getOrderItemsById(orderId);
+		
+		return ResponseEntity.ok(new ResponseHandler(true, "Orders Items found", orderItems));
 		
 	}
 	

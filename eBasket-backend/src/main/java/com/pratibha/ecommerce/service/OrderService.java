@@ -120,5 +120,15 @@ public class OrderService {
 	public List<Orders> getAllOrders(Integer userId) {
 		return this.orderRepository.getAllOrdersByUserId(userId);
 	}
+
+
+	public Orders getOrderById(Integer orderId) {
+		return this.orderRepository.findById(orderId).get();
+	}
+
+
+	public List<OrderItem> getOrderItemsById(Integer orderId) {
+		return this.orderItemRepository.findAllByOrderId(orderId);
+	}
 	
 }
