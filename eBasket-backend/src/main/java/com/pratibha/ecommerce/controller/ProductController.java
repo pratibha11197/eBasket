@@ -37,7 +37,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/products/all")
-	public ResponseEntity<ResponseHandler> getAllProducts(@RequestParam(name="searchKey", defaultValue="") String searchKey) {
+	public ResponseEntity<ResponseHandler> getAllProducts(@RequestParam(name="searchKey", defaultValue="") String searchKey, @RequestParam(name="criteria", defaultValue="") String criteria) {
 		List<Product> products = null;
 		
 		if(searchKey == null || searchKey.isEmpty()) {
@@ -48,6 +48,7 @@ public class ProductController {
 		}
 		
 		if (products != null && products.size() > 0) {
+			products = productService.sortUsingCriteria(products, criteria);
 			return new ResponseEntity<>(new ResponseHandler(true, "OK", products), HttpStatus.OK);
 	    }
 	    else {
@@ -56,7 +57,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/products")
-	public ResponseEntity<ResponseHandler> getProductsByCategory(@PathParam("category") String category, @RequestParam(name="searchKey", defaultValue="") String searchKey) {
+	public ResponseEntity<ResponseHandler> getProductsByCategoryAndCriteria(@PathParam("category") String category, @RequestParam(name="searchKey", defaultValue="") String searchKey, @RequestParam(name="criteria", defaultValue="") String criteria) {
 		List<Product> products = null;
 		if(searchKey == null || searchKey.isEmpty()) {
 		  products = productService.getProductsByCategory(category);
@@ -65,7 +66,9 @@ public class ProductController {
 			  products = productService.getProductsUsingCategoryAndSearchKey(category, searchKey);
 		}
 		
+		
 		if (products != null) {
+			products = productService.sortUsingCriteria(products, criteria);
 			return new ResponseEntity<>(new ResponseHandler(true, "OK", products), HttpStatus.OK);
 	    }
 	    else {
