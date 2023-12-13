@@ -16,6 +16,7 @@ import com.pratibha.ecommerce.config.JwtUtil;
 import com.pratibha.ecommerce.entity.Cart;
 import com.pratibha.ecommerce.entity.Customer;
 import com.pratibha.ecommerce.entity.Role;
+import com.pratibha.ecommerce.exception.EBasketException;
 import com.pratibha.ecommerce.repository.CartRepository;
 import com.pratibha.ecommerce.repository.CustomerRepository;
 import com.pratibha.ecommerce.requestresponse.AuthenticationRequest;
@@ -89,6 +90,23 @@ public class CustomerService {
     	 Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
          Customer user = customerRepository.findCustomerByEmail(((UserDetails) principal).getUsername());
          return user;
+	}
+
+	public Customer editCustomerDetails(Integer userId, String userName, String email, String phone) throws EBasketException {
+		try {
+			Customer newCustomer = customerRepository.findById(userId).get();
+			newCustomer.setCustomer_name(userName);
+			newCustomer.setEmail(email);
+			newCustomer.setPhone_no(new BigInteger(phone));		
+			Customer customer = customerRepository.save(newCustomer);
+			
+			return customer;
+			
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				throw new EBasketException("Failed to update user details");
+			}		
 	}
 
 }
